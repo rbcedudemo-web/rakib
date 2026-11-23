@@ -26,7 +26,7 @@ export const MAIN_MENU: NavItem[] = [
   { key: "nav.contact", href: "/contact" },
 ];
 
-export const PROFILE_MENU: Record<Exclude<Role, "admin">, NavItem[]> = {
+export const PROFILE_MENU: Record<Role, NavItem[]> = {
   student: [
     { key: "profile.student.profile", href: "/me/profile" },
     { key: "profile.student.dashboard", href: "/me" },
@@ -48,6 +48,10 @@ export const PROFILE_MENU: Record<Exclude<Role, "admin">, NavItem[]> = {
     { key: "profile.teacher.studentProgress", href: "/teacher/students" },
     { key: "profile.teacher.liveSchedule", href: "/live" },
     { key: "profile.settings", href: "/teacher/settings" },
+    { key: "profile.logout", href: "/logout" },
+  ],
+  admin: [
+    { key: "admin.title", href: "/admin" },
     { key: "profile.logout", href: "/logout" },
   ],
 };

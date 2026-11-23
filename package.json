@@ -2,7 +2,7 @@
   "name": "rupshi-demo",
   "private": true,
   "version": "0.1.0",
-  "description": "সবার জন্য ডিজিটাল দূরশিক্ষণ — Ruposhi Bangla Television demo",
+  "description": "\u09b8\u09ac\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09a1\u09bf\u099c\u09bf\u099f\u09be\u09b2 \u09a6\u09c2\u09b0\u09b6\u09bf\u0995\u09cd\u09b7\u09a3 \u2014 Ruposhi Bangla Television demo",
   "workspaces": [
     "packages/*",
     "apps/web"
@@ -11,9 +11,14 @@
     "dev": "npm run dev -w @rupshi/web",
     "build": "npm run build -w @rupshi/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "db:test": "bash supabase/tests/run.sh",
+    "db:bundle": "node scripts/bundle-sql.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "supabase": "^2.122.1"
   }
 }

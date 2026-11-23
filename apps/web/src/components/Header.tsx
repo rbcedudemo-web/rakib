@@ -14,6 +14,8 @@ export interface HeaderUser {
   name: string;
   role: Role;
   avatarUrl?: string;
+  /** student ID or phone, shown under the name in the dropdown */
+  detail?: string;
 }
 
 function useOutsideClose(open: boolean, close: () => void) {
@@ -78,7 +80,7 @@ function ProfileMenu({ user }: { user: HeaderUser }) {
   const { t } = useT();
   const [open, setOpen] = useState(false);
   const ref = useOutsideClose(open, () => setOpen(false));
-  const items = user.role === "admin" ? [] : PROFILE_MENU[user.role];
+  const items = PROFILE_MENU[user.role];
   const initial = user.name.trim().charAt(0) || "?";
   return (
     <div ref={ref} className="relative shrink-0">
@@ -103,21 +105,29 @@ function ProfileMenu({ user }: { user: HeaderUser }) {
         <div className="absolute right-0 top-full z-30 mt-1 w-64 rounded-xl border border-neutral-200 bg-white p-1 shadow-lg">
           <div className="border-b border-neutral-100 px-3 py-2">
             <div className="font-semibold text-neutral-800">{user.name}</div>
-            <div className="text-xs text-neutral-500">{t(`role.${user.role}`)}</div>
+            <div className="text-xs text-neutral-500">
+              {t(`role.${user.role}`)}
+              {user.detail && <> · {user.detail}</>}
+            </div>
           </div>
-          {items.map((c) => (
-            <Link
-              key={c.key}
-              href={c.href}
-              onClick={() => setOpen(false)}
-              className={cn(
-                "block rounded-lg px-3 py-2 text-sm hover:bg-primary-50",
-                c.key === "profile.logout" ? "text-accent-700" : "text-neutral-700",
-              )}
-            >
-              {t(c.key)}
-            </Link>
-          ))}
+          {items.map((c) =>
+            c.key === "profile.logout" ? (
+              <form key={c.key} action="/logout" method="post">
+                <button type="submit" className="block w-full rounded-lg px-3 py-2 text-left text-sm text-accent-700 hover:bg-accent-50">
+                  {t(c.key)}
+                </button>
+              </form>
+            ) : (
+              <Link
+                key={c.key}
+                href={c.href}
+                onClick={() => setOpen(false)}
+                className="block rounded-lg px-3 py-2 text-sm text-neutral-700 hover:bg-primary-50"
+              >
+                {t(c.key)}
+              </Link>
+            ),
+          )}
         </div>
       )}
     </div>

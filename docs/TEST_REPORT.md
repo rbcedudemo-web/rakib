@@ -1,5 +1,15 @@
 # Test Report
 
+## 23 Nov 2026 — D1
+| Check | Result |
+| --- | --- |
+| Database security tests (`npm run db:test`, Postgres 17 Supabase image): enrolment rules, student ID, profile guard, subject visibility by class/version/group, question bank hidden from students, ordered unlocking at 50%, storage folders, teacher scope, admin access, visitor access | 42 / 42 passed |
+| Seed runs twice without errors | Passed |
+| Unit tests: phone numbers (BD formats, Bangla digits), translations, demo OTP, wrong-code limiter, login action branches (new student, enrolled student, phone-only teacher, disabled account, server error) | 38 / 38 passed |
+| Typecheck, production build | Passed |
+| Screens: login (mobile), enrolment form, `/me` redirects to login when signed out | Checked |
+| Login against the real Supabase project | Not run: this build environment cannot reach supabase.co; runs once the site is online |
+
 ## 23 Nov 2026 — D0
 | Check | Result |
 | --- | --- |

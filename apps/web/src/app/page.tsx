@@ -1,7 +1,12 @@
+import { redirect } from "next/navigation";
 import { getT } from "@/lib/i18n-server";
+import { getSession, homePathFor } from "@/lib/supabase/server";
 import { ButtonLink, Card } from "@/components/ui";
 
 export default async function HomePage() {
+  // "Home" in the header is each person's own home page once signed in.
+  const session = await getSession();
+  if (session) redirect(homePathFor(session.profile));
   const { t } = await getT();
   const features = [
     { icon: "▶", title: t("home.feature.video"), body: t("home.feature.video.body") },

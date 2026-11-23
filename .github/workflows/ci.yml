@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  check:
+  app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,3 +18,20 @@ jobs:
       - run: npm test
       - run: npm run typecheck
       - run: npm run build
+
+  database:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Bundled SQL is up to date
+        run: |
+          node scripts/bundle-sql.mjs
+          git diff --exit-code supabase/deploy/setup.sql
+      - name: Migrations, seed and security tests
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          bash supabase/tests/run.sh | tee db-test.log
+          grep -q "ALL RLS TESTS PASSED" db-test.log

@@ -3,6 +3,7 @@ import { colors, GROUPS, VERSIONS } from "@rupshi/shared";
 import { getT } from "@/lib/i18n-server";
 import { Header } from "@/components/Header";
 import { Badge, Button, Card } from "@/components/ui";
+import { OnboardingForm } from "@/app/onboarding/OnboardingForm";
 
 export const metadata: Metadata = { title: "Design system", robots: { index: false } };
 
@@ -106,6 +107,13 @@ export default async function DesignPage() {
           </div>
         </div>
         <p className="mt-2 text-sm text-neutral-500">ছবির জায়গায় চাপলে নিজের তালিকা খোলে। ছোট পর্দায় মেনু ☰ বোতামে।</p>
+      </Section>
+
+      <Section title="ভর্তির ফর্ম (নমুনা) — প্রথমবার Login-এর পর">
+        <Card className="max-w-xl p-6">
+          <OnboardingForm />
+        </Card>
+        <p className="mt-2 text-sm text-neutral-500">নবম শ্রেণি বা তার উপরে বাছলে বিভাগের ঘর দেখা যায়। এই নমুনা থেকে জমা দেওয়া যাবে না।</p>
       </Section>
     </main>
   );

@@ -10,5 +10,5 @@ export async function getLocale(): Promise<Locale> {
 
 export async function getT() {
   const locale = await getLocale();
-  return { locale, t: (key: MessageKey) => translate(locale, key) };
+  return { locale, t: (key: MessageKey, vars?: Record<string, string | number>) => translate(locale, key, vars) };
 }

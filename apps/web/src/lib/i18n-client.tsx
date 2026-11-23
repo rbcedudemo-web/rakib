@@ -11,5 +11,5 @@ export function LocaleProvider({ locale, children }: { locale: Locale; children:
 
 export function useT() {
   const locale = useContext(LocaleContext);
-  return { locale, t: (key: MessageKey) => translate(locale, key) };
+  return { locale, t: (key: MessageKey, vars?: Record<string, string | number>) => translate(locale, key, vars) };
 }
