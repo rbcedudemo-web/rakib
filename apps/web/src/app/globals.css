@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-neutral-50 text-neutral-800 antialiased;
+    /* Bangla script needs more line height than Latin. */
+    line-height: 1.65;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
+}
+
+@layer components {
+  .page {
+    @apply mx-auto w-full max-w-page px-4 sm:px-6;
+  }
+}
