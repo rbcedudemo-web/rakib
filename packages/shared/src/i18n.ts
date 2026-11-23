@@ -70,6 +70,63 @@ const bn = {
   "home.feature.tutor.body": "যেকোনো সময় প্রশ্ন করুন, ধাপে ধাপে বুঝে নিন",
 
   "footer.rights": "সর্বস্বত্ব সংরক্ষিত",
+  "login.title": "লগইন করুন",
+  "login.subtitle": "মোবাইল নম্বর দিন, একটি ৬ সংখ্যার কোড আসবে",
+  "login.phone": "মোবাইল নম্বর",
+  "login.sendCode": "কোড পাঠান",
+  "login.code": "৬ সংখ্যার কোড",
+  "login.codeSentTo": "কোড পাঠানো হয়েছে",
+  "login.verify": "যাচাই করে ঢুকুন",
+  "login.changeNumber": "নম্বর বদলান",
+  "login.demoHint": "ডেমো: কোনো SMS যাবে না। কোডের ঘরে ১২৩৪৫৬ লিখুন।",
+  "login.error.phone": "সঠিক মোবাইল নম্বর দিন, যেমন 01712345678",
+  "login.error.code": "কোডটি সঠিক নয়",
+  "login.error.tooMany": "অনেকবার ভুল হয়েছে। ১০ মিনিট পরে আবার চেষ্টা করুন।",
+  "login.error.server": "এখন লগইন করা যাচ্ছে না। একটু পরে আবার চেষ্টা করুন।",
+  "login.error.inactive": "এই account বন্ধ আছে। অ্যাডমিনের সাথে যোগাযোগ করুন।",
+  "login.notConfigured": "Database এখনো যুক্ত হয়নি, তাই লগইন আপাতত বন্ধ।",
+  "login.adminLink": "অ্যাডমিন? ইমেইল দিয়ে লগইন করুন",
+  "login.admin.title": "অ্যাডমিন লগইন",
+  "login.admin.email": "ইমেইল",
+  "login.admin.password": "পাসওয়ার্ড",
+  "login.admin.error": "ইমেইল বা পাসওয়ার্ড সঠিক নয়, অথবা এটি অ্যাডমিন account নয়",
+
+  "onboard.title": "ভর্তি ফর্ম",
+  "onboard.subtitle": "একবার পূরণ করলেই পড়াশোনা শুরু",
+  "onboard.name": "আপনার পুরো নাম",
+  "onboard.class": "শ্রেণি",
+  "onboard.group": "বিভাগ",
+  "onboard.version": "ভার্সন",
+  "onboard.choose": "বেছে নিন",
+  "onboard.submit": "ভর্তি সম্পন্ন করুন",
+  "onboard.note": "শ্রেণি, বিভাগ বা ভার্সন পরে বদলাতে হলে অ্যাডমিনের সাথে যোগাযোগ করতে হবে।",
+  "onboard.error.name": "নাম লিখুন",
+  "onboard.error.class": "শ্রেণি বেছে নিন",
+  "onboard.error.group": "নবম শ্রেণি থেকে বিভাগ বেছে নিতে হবে",
+  "onboard.error.version": "ভার্সন বেছে নিন",
+
+  "student.greeting": "স্বাগতম, {name}",
+  "student.id": "শিক্ষার্থী আইডি",
+  "student.subjects": "আমার বিষয়",
+  "student.lessons": "{n}টি পাঠ",
+  "student.live": "লাইভ ক্লাস",
+  "student.prep.ssc": "এসএসসি প্রস্তুতি লাইভ",
+  "student.prep.hsc": "এইচএসসি প্রস্তুতি লাইভ",
+  "student.join": "সময়সূচি দেখুন",
+  "student.locked": "সদস্য হলে খুলবে",
+  "student.nextClass": "পরের ক্লাস",
+  "student.noSchedule": "এখনো কোনো ক্লাস ঠিক হয়নি",
+
+  "teacher.title": "শিক্ষক ড্যাশবোর্ড",
+  "teacher.subjects": "আমার বিষয়",
+  "teacher.none": "এখনো কোনো বিষয় দেওয়া হয়নি। অ্যাডমিনের সাথে যোগাযোগ করুন।",
+
+  "admin.title": "অ্যাডমিন ড্যাশবোর্ড",
+  "admin.stat.students": "মোট শিক্ষার্থী",
+  "admin.stat.teachers": "শিক্ষক",
+  "admin.stat.subjects": "বিষয়",
+  "admin.stat.lessons": "পাঠ",
+  "admin.more": "পূর্ণ ড্যাশবোর্ড পরের ধাপগুলোতে আসবে। এখানের সব সংখ্যা Database থেকে সরাসরি আসে।",
 } as const;
 
 export type MessageKey = keyof typeof bn;
@@ -142,6 +199,63 @@ const en: Record<MessageKey, string> = {
   "home.feature.tutor.body": "Ask any time and understand step by step",
 
   "footer.rights": "All rights reserved",
+  "login.title": "Log in",
+  "login.subtitle": "Enter your mobile number to get a 6-digit code",
+  "login.phone": "Mobile number",
+  "login.sendCode": "Send code",
+  "login.code": "6-digit code",
+  "login.codeSentTo": "Code sent to",
+  "login.verify": "Verify and continue",
+  "login.changeNumber": "Change number",
+  "login.demoHint": "Demo: no SMS is sent. Enter 123456 as the code.",
+  "login.error.phone": "Enter a valid mobile number, e.g. 01712345678",
+  "login.error.code": "That code is not correct",
+  "login.error.tooMany": "Too many wrong codes. Try again in 10 minutes.",
+  "login.error.server": "Login is not available right now. Please try again shortly.",
+  "login.error.inactive": "This account is disabled. Please contact the admin.",
+  "login.notConfigured": "The database is not connected yet, so login is off for now.",
+  "login.adminLink": "Admin? Log in with email",
+  "login.admin.title": "Admin login",
+  "login.admin.email": "Email",
+  "login.admin.password": "Password",
+  "login.admin.error": "Wrong email or password, or this is not an admin account",
+
+  "onboard.title": "Enrolment form",
+  "onboard.subtitle": "Fill this in once and start learning",
+  "onboard.name": "Your full name",
+  "onboard.class": "Class",
+  "onboard.group": "Group",
+  "onboard.version": "Version",
+  "onboard.choose": "Choose",
+  "onboard.submit": "Complete enrolment",
+  "onboard.note": "To change class, group or version later, contact the admin.",
+  "onboard.error.name": "Enter your name",
+  "onboard.error.class": "Choose a class",
+  "onboard.error.group": "From Class 9 a group is required",
+  "onboard.error.version": "Choose a version",
+
+  "student.greeting": "Welcome, {name}",
+  "student.id": "Student ID",
+  "student.subjects": "My subjects",
+  "student.lessons": "{n} lessons",
+  "student.live": "Live Classes",
+  "student.prep.ssc": "SSC Preparation Live",
+  "student.prep.hsc": "HSC Preparation Live",
+  "student.join": "See schedule",
+  "student.locked": "Opens for members",
+  "student.nextClass": "Next class",
+  "student.noSchedule": "No class scheduled yet",
+
+  "teacher.title": "Teacher Dashboard",
+  "teacher.subjects": "My subjects",
+  "teacher.none": "No subject assigned yet. Please contact the admin.",
+
+  "admin.title": "Admin Dashboard",
+  "admin.stat.students": "Students",
+  "admin.stat.teachers": "Teachers",
+  "admin.stat.subjects": "Subjects",
+  "admin.stat.lessons": "Lessons",
+  "admin.more": "The full dashboard arrives in later stages. Every number here comes straight from the database.",
 };
 
 export const messages: Record<Locale, Record<MessageKey, string>> = { bn, en };
@@ -150,6 +264,8 @@ export function isLocale(value: unknown): value is Locale {
   return typeof value === "string" && (LOCALES as readonly string[]).includes(value);
 }
 
-export function translate(locale: Locale, key: MessageKey): string {
-  return messages[locale][key] ?? messages[DEFAULT_LOCALE][key];
+export function translate(locale: Locale, key: MessageKey, vars?: Record<string, string | number>): string {
+  let text = messages[locale][key] ?? messages[DEFAULT_LOCALE][key];
+  if (vars) for (const [k, v] of Object.entries(vars)) text = text.replaceAll(`{${k}}`, String(v));
+  return text;
 }

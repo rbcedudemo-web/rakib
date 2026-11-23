@@ -27,6 +27,7 @@ describe("i18n", () => {
       ...MAIN_MENU.flatMap((m) => [m.key, ...(m.children ?? []).map((c) => c.key)]),
       ...PROFILE_MENU.student.map((m) => m.key),
       ...PROFILE_MENU.teacher.map((m) => m.key),
+      ...PROFILE_MENU.admin.map((m) => m.key),
       ...VERSIONS.map((v) => `version.${v}`),
       ...GROUPS.map((g) => `group.${g}`),
     ];
@@ -36,6 +37,7 @@ describe("i18n", () => {
   it("translates", () => {
     expect(translate("en", "nav.home")).toBe("Home");
     expect(translate("bn", "nav.home")).toBe("হোম");
+    expect(translate("en", "student.greeting", { name: "Rafi" })).toBe("Welcome, Rafi");
   });
 });
 
