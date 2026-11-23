@@ -1,5 +1,5 @@
 -- =============================================================================
--- D1 · Storage buckets
+-- D1 - Storage buckets
 --   lesson-media    note PDFs, small video files, thumbnails  (signed-in read)
 --   lesson-private  transcripts, read by staff and AI only
 --   answer-sheets   students' written-answer photos           (owner + staff)

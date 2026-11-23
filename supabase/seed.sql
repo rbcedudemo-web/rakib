@@ -3,7 +3,7 @@
 -- [Source] classes 6-12, four versions, three groups, demo subjects Bangla /
 --          English / Mathematics for classes 9-10 (Rakib, 22-23 Nov 2026).
 -- [Inferred] the rest of the class 9-10 subject list follows the NCTB SSC
---          structure; the real list is set by the admin (Guideline §7-খ).
+--          structure; the real list is set by the admin (Guideline sec. 7b).
 -- [Sample]  package prices, notices and live schedule are placeholders for the
 --          UI-only screens; no payment is taken.
 -- Safe to run more than once.
@@ -60,7 +60,7 @@ cross join unnest(cat.versions) as v
 on conflict (class_id, version, code) do update
   set name_bn = excluded.name_bn, name_en = excluded.name_en, group_code = excluded.group_code, sort = excluded.sort;
 
--- Settings (Admin → Settings) ------------------------------------------------
+-- Settings (Admin -> Settings) ------------------------------------------------
 insert into public.settings (key, value) values
   ('exam_attempts_per_day', '3'),          -- [Source] Rakib
   ('unlock_percent', '50'),                -- [Source] Rakib

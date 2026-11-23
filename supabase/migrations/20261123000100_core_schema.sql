@@ -1,6 +1,6 @@
 -- =============================================================================
--- D1 · Core schema for the investor demo
--- Tables follow the Demo Build Guideline §9 (21 tables + notices), named as in
+-- D1 - Core schema for the investor demo
+-- Tables follow the Demo Build Guideline sec. 9 (21 tables + notices), named as in
 -- the full design so they carry over to the production platform.
 -- =============================================================================
 

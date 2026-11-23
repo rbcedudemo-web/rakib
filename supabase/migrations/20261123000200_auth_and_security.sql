@@ -1,6 +1,6 @@
 -- =============================================================================
--- D1 · Roles, enrolment and Row Level Security
--- Rules (Guideline §9, project instructions §7):
+-- D1 - Roles, enrolment and Row Level Security
+-- Rules (Guideline sec. 9, project instructions sec. 7):
 --   * a student sees only their own records and the subjects of their class,
 --     version and group; never the question bank or correct answers;
 --   * a teacher sees only the subjects assigned to them;
@@ -101,7 +101,7 @@ create trigger on_auth_user_created
 -- ------------------------------------- protect sensitive profile fields ----
 -- Signed-in users may edit their own name and photo. Role, class, version,
 -- group, phone, student code and status change only through an admin or the
--- enrolment function below (Guideline §7-ক: students cannot change class).
+-- enrolment function below (Guideline sec. 7a: students cannot change class).
 -- SECURITY INVOKER on purpose: current_user is then the API role of the caller,
 -- while SECURITY DEFINER functions such as enroll_student() run as the owner.
 create or replace function public.guard_profile_update()
@@ -127,7 +127,7 @@ create trigger profiles_guard before update on public.profiles
   for each row execute function public.guard_profile_update();
 
 -- --------------------------------------------------------- enrolment ----
--- First-login form (Guideline §7-ক). Runs once per student.
+-- First-login form (Guideline sec. 7a). Runs once per student.
 create or replace function public.enroll_student(
   p_full_name text,
   p_class_id smallint,
@@ -356,7 +356,7 @@ create policy "read: own answer or staff" on public.mark_changes for select usin
   )
 );
 
--- Tutor: own conversations; admins read all (Guideline §7: shown above the chat).
+-- Tutor: own conversations; admins read all (Guideline sec. 7: shown above the chat).
 create policy "read: self or admin" on public.tutor_conversations for select
   using (user_id = auth.uid() or public.is_admin());
 create policy "insert: self" on public.tutor_conversations for insert with check (user_id = auth.uid());
