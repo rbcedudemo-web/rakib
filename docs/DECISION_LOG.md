@@ -15,3 +15,4 @@
 | 23 Nov 2026 | New phone numbers always become students; teachers and admins are created by an admin | Claude |
 | 23 Nov 2026 | Class 9–10 subject list beyond Bangla/English/Math follows NCTB SSC structure [Inferred]; English Medium and Madrasa get only the three demo subjects until the admin adds theirs | Claude |
 | 23 Nov 2026 | Database setup is one SQL file pasted into the Supabase SQL Editor, so no database password leaves Rakib | Claude |
+| 23 Nov 2026 | Hosting on Vercel Hobby (project rakib, https://rakib-azure.vercel.app); table/function grants to API roles are explicit in a migration instead of relying on project defaults | Claude |

@@ -155,6 +155,13 @@ select pg_temp.check((select class_id = 10 from public.profiles where phone = '8
 insert into public.settings (key, value) values ('test_key', '1');
 select pg_temp.check((select count(*) = 1 from public.questions), 'admin sees the question bank');
 
+-- the website server (service_role key): used by the demo phone login
+select pg_temp.act_as_admin_db();
+set local role service_role;
+select pg_temp.check((select count(*) = 6 from public.profiles), 'website server can read profiles (demo login)');
+select pg_temp.check((select count(*) > 0 from public.subjects), 'website server can read subjects');
+reset role;
+
 -- anonymous visitors
 select pg_temp.act_as_admin_db();
 set local role anon;
