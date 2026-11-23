@@ -1,0 +1,19 @@
+{
+  "name": "rupshi-demo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "সবার জন্য ডিজিটাল দূরশিক্ষণ — Ruposhi Bangla Television demo",
+  "workspaces": [
+    "packages/*",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @rupshi/web",
+    "build": "npm run build -w @rupshi/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
