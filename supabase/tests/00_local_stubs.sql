@@ -25,3 +25,13 @@ create or replace function storage.foldername(name text) returns text[]
 language sql immutable as $$ select (string_to_array(name, '/'))[1:array_length(string_to_array(name, '/'), 1) - 1] $$;
 grant usage on schema storage to anon, authenticated, service_role;
 grant all on storage.objects, storage.buckets to anon, authenticated, service_role;
+
+-- Behave like a new hosted project: no automatic grants to the API roles on
+-- new tables, sequences or functions. The migrations must grant what they need.
+alter default privileges for role supabase_admin in schema public revoke all on tables from anon, authenticated, service_role;
+alter default privileges for role supabase_admin in schema public revoke all on sequences from anon, authenticated, service_role;
+alter default privileges for role supabase_admin in schema public revoke all on functions from anon, authenticated, service_role;
+alter default privileges for role supabase_admin revoke execute on functions from public;
+alter default privileges for role postgres in schema public revoke all on tables from anon, authenticated, service_role;
+alter default privileges for role postgres in schema public revoke all on sequences from anon, authenticated, service_role;
+alter default privileges for role postgres in schema public revoke all on functions from anon, authenticated, service_role;

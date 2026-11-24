@@ -3,7 +3,7 @@
 ## 23 Nov 2026 — D1
 | Check | Result |
 | --- | --- |
-| Database security tests (`npm run db:test`, Postgres 17 Supabase image): enrolment rules, student ID, profile guard, subject visibility by class/version/group, question bank hidden from students, ordered unlocking at 50%, storage folders, teacher scope, admin access, visitor access | 42 / 42 passed |
+| Database security tests (`npm run db:test`, Postgres 17 Supabase image): enrolment rules, student ID, profile guard, subject visibility by class/version/group, question bank hidden from students, ordered unlocking at 50%, storage folders, teacher scope, admin access, visitor access | 44 / 44 passed (now also run with hosted-style default privileges: no automatic grants) |
 | Seed runs twice without errors | Passed |
 | Unit tests: phone numbers (BD formats, Bangla digits), translations, demo OTP, wrong-code limiter, login action branches (new student, enrolled student, phone-only teacher, disabled account, server error) | 38 / 38 passed |
 | Typecheck, production build | Passed |
@@ -22,3 +22,4 @@
 | # | Issue | Status |
 | --- | --- | --- |
 | 1 | Student dropdown hidden behind second header on `/design` | Fixed |
+| 2 | Live site: login failed with 42501 "permission denied for table profiles"; new hosted Supabase projects give API roles no automatic table grants | Fixed: migration `20261123000400_api_grants.sql`, test harness now reproduces hosted defaults |
