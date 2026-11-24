@@ -1,5 +1,24 @@
 # Project Progress
 
+## 24 Nov 2026 — D2 Admin: lessons and Video Upload
+Done
+- Admin area with its own menu (dashboard, Video Upload & Lessons, Subjects; later pages listed as coming).
+- Video Upload form: class → version → subject, chapter (pick or create), title, description,
+  YouTube link (Unlisted) or small MP4, video length filled in automatically from the player,
+  transcript (type, paste, or .txt/.srt/.vtt converted to plain text), note PDF, exam settings
+  (MCQ, written, minutes, marks; defaults from Settings), publish switch.
+- Files go straight from the browser to Supabase Storage under `<lesson id>/…` (no size limit from
+  the website host); transcripts stay in the private bucket for staff and the AI only.
+- Lesson list per subject with file checklist, status, move up/down, publish/hide, two-step delete.
+- Subjects page with lesson counts and on/off switch.
+- Database: `move_lesson` function (swap order safely); 6 new security checks (50 in total).
+- Live site fix: explicit API grants (PR #3) after the hosted project refused table access.
+
+Pending
+- Rakib runs `supabase/migrations/20261124000100_lesson_admin.sql` once in the SQL Editor (adds `move_lesson`).
+- Rakib uploads one sample lesson to check the whole flow on the live site.
+
+
 ## 23 Nov 2026 — D1 Database and Login
 Done
 - 22 tables with keys, checks and indexes; 3 migrations; seed with classes, groups, versions,

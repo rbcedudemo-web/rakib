@@ -1,9 +1,20 @@
 # Test Report
 
+## 24 Nov 2026 — D2
+| Check | Result |
+| --- | --- |
+| Database security tests, now run with hosted-style privileges (no automatic grants) | 50 / 50 passed: adds website server access, lesson reorder (swap, first/last unchanged), Math teacher cannot reorder Bangla lessons, admin creates chapter + draft lesson + exam settings, no publishing without a video |
+| Unit tests: YouTube link formats, video length parse/format (Bangla digits), .srt/.vtt to text, Video Upload validation | 61 / 61 passed (47 shared + 14 web) |
+| Typecheck, production build (20 routes) | Passed |
+| Screens: Video Upload form desktop and phone, error messages | Checked with Playwright on a mock catalogue |
+| Live login (student + admin) on rakib-azure.vercel.app | Passed (checked by Rakib, 23 Nov) |
+| Upload to real storage, YouTube length auto-fill | Not run here (supabase.co and YouTube unreachable from the build environment); Rakib checks with the sample lesson |
+
+
 ## 23 Nov 2026 — D1
 | Check | Result |
 | --- | --- |
-| Database security tests (`npm run db:test`, Postgres 17 Supabase image): enrolment rules, student ID, profile guard, subject visibility by class/version/group, question bank hidden from students, ordered unlocking at 50%, storage folders, teacher scope, admin access, visitor access | 44 / 44 passed (now also run with hosted-style default privileges: no automatic grants) |
+| Database security tests (`npm run db:test`, Postgres 17 Supabase image): enrolment rules, student ID, profile guard, subject visibility by class/version/group, question bank hidden from students, ordered unlocking at 50%, storage folders, teacher scope, admin access, visitor access | 42 / 42 passed |
 | Seed runs twice without errors | Passed |
 | Unit tests: phone numbers (BD formats, Bangla digits), translations, demo OTP, wrong-code limiter, login action branches (new student, enrolled student, phone-only teacher, disabled account, server error) | 38 / 38 passed |
 | Typecheck, production build | Passed |

@@ -146,6 +146,8 @@ update public.lessons set title = 'hacked' where sequence = 1;
 select pg_temp.check((select count(*) = 0 from public.lessons where title = 'hacked'), 'Math teacher cannot edit Bangla lessons');
 select pg_temp.refused($$insert into public.lessons (subject_id, sequence, title) select subject_id, 9, 'x' from public.teacher_subjects where teacher_id = auth.uid()$$,
                        'teacher without upload permission cannot add lessons');
+select pg_temp.refused($$select public.move_lesson('10000000-0000-0000-0000-000000000002', -1)$$,
+                       'Math teacher cannot reorder Bangla lessons');
 
 -- ---------------------------------------------------------------- admin ----
 select pg_temp.act_as('00000000-0000-0000-0000-00000000000a');
@@ -154,6 +156,27 @@ update public.profiles set class_id = 10, group_code = 'science' where phone = '
 select pg_temp.check((select class_id = 10 from public.profiles where phone = '8801800000001'), 'admin can move a student to another class');
 insert into public.settings (key, value) values ('test_key', '1');
 select pg_temp.check((select count(*) = 1 from public.questions), 'admin sees the question bank');
+
+-- admin Video Upload (D2)
+select public.move_lesson('10000000-0000-0000-0000-000000000002', -1);
+set constraints all immediate;
+select pg_temp.check((select sequence = 1 from public.lessons where id = '10000000-0000-0000-0000-000000000002')
+                 and (select sequence = 2 from public.lessons where id = '10000000-0000-0000-0000-000000000001'),
+                 'admin moves a lesson up (the two lessons swap places)');
+select public.move_lesson('10000000-0000-0000-0000-000000000002', -1);
+select pg_temp.check((select sequence = 1 from public.lessons where id = '10000000-0000-0000-0000-000000000002'), 'moving the first lesson up changes nothing');
+select public.move_lesson('10000000-0000-0000-0000-000000000004', 1);
+select pg_temp.check((select sequence = 4 from public.lessons where id = '10000000-0000-0000-0000-000000000004'), 'moving the last lesson down changes nothing');
+insert into public.chapters (id, subject_id, title, sort)
+select '20000000-0000-0000-0000-000000000001', id, 'অধ্যায় ১', 1 from public.subjects where class_id = 9 and version = 'bangla' and code = 'math';
+insert into public.lessons (id, subject_id, chapter_id, sequence, title, created_by)
+select '10000000-0000-0000-0000-000000000009', subject_id, id, 1, 'ভগ্নাংশ', auth.uid() from public.chapters where id = '20000000-0000-0000-0000-000000000001';
+insert into public.exam_settings (lesson_id, mcq_count, written_count, duration_minutes)
+values ('10000000-0000-0000-0000-000000000009', 12, 3, 20);
+select pg_temp.check((select count(*) = 1 from public.exam_settings where lesson_id = '10000000-0000-0000-0000-000000000009'),
+                     'admin adds a chapter, a draft lesson and its exam settings');
+select pg_temp.refused($$update public.lessons set is_published = true where id = '10000000-0000-0000-0000-000000000009'$$,
+                       'a lesson without a video cannot be published');
 
 -- the website server (service_role key): used by the demo phone login
 select pg_temp.act_as_admin_db();
