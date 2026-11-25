@@ -4,7 +4,7 @@
 | Check | Result |
 | --- | --- |
 | Database security tests (unchanged D1/D2 file) | 50 / 50 passed |
-| Exam tests (`supabase/tests/exam_test.sql`) | 32 / 32 passed: status counts, locked lesson refused, no direct writes, question count and full marks from settings, answers hidden until submit, switched-off questions never asked, server timer, resume without using an attempt, photo path must be the student's own, another student cannot open/submit, instant MCQ marking with corrections, no changes after submit, 4th attempt refused, best score, teacher view, internal function not callable, midnight reset, timeout auto-submit, used question cannot be deleted, lesson delete removes attempts |
+| Exam tests (`supabase/tests/exam_test.sql`) | 36 / 36 passed: status counts, locked lesson refused, no direct writes, question count and full marks from settings, answers hidden until submit, switched-off questions never asked, server timer, resume without using an attempt, photo path must be the student's own, another student cannot open/submit, instant MCQ marking with corrections, no changes after submit, 4th attempt refused, best score, teacher view, internal function not callable, midnight reset, timeout auto-submit, used question cannot be deleted, lesson delete removes attempts |
 | Unit tests: question cleaning (bad/duplicate options, wrong index, missing model answer), bank size targets, question language, AI cost, exam clock with server offset | 61 shared + 14 web passed |
 | Typecheck, production build (22 routes) | Passed |
 | Exam screen on a phone (390 px) | Checked with Playwright on mock data |
