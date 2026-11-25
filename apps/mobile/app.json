@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "রূপসী বাংলা দূরশিক্ষণ",
+    "slug": "rupshi-dureshikkhon",
+    "version": "0.1.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "rupshi",
+    "platforms": ["android"],
+    "android": {
+      "package": "com.ruposhibangla.dureshikkhon",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#006a4e",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "permissions": ["CAMERA", "INTERNET", "ACCESS_NETWORK_STATE"],
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 160,
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "extra": {
+      "siteUrl": "https://rakib-azure.vercel.app",
+      "startPath": "/me"
+    }
+  }
+}
