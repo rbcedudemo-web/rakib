@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { isSupabaseConfigured, supabaseAnonKey, supabaseUrl } from "@/lib/env";
 
-const PROTECTED = ["/me", "/teacher", "/admin", "/onboarding"];
+const PROTECTED = ["/me", "/learn", "/teacher", "/admin", "/onboarding"];
 const PUBLIC_UNDER_PROTECTED = ["/admin/login"];
 
 /** Refreshes the auth cookie on every request and sends signed-out visitors to the login page. */
