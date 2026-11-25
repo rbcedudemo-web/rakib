@@ -22,6 +22,12 @@ key and the user's session. Privileged steps run on the server.
 | `exam_attempt_view` | `p_attempt_id uuid` | jsonb: questions with options in the shuffled order; after submission also `correct`, `is_correct`, marks, explanation, model answer; closes an attempt whose time is over |
 | `save_exam_answer` | `p_attempt_id, p_question_id, p_selected int?` (shown position), `p_images text[]?` (`answer-sheets/<student>/<attempt>/…`) | void; hint `exam.error.timeUp` after the deadline (+30 s grace) |
 | `submit_exam` | `p_attempt_id uuid` | jsonb attempt view with corrections; MCQs marked, written with photos set to `pending_teacher` |
+| `marking_queue` | `p_status 'pending'\|'marked', p_lesson_id uuid?, p_limit int` | jsonb list of written answers with photos for the caller's subjects (staff only) |
+| `marking_pending_count` | – | int, answers waiting for the caller |
+| `mark_answer` | `p_answer_id, p_marks numeric, p_feedback text?, p_reason text?` | jsonb `{marks, max, attempt_score}`; hints `marking.error.*`; logs `mark_changes` |
+| `my_report` | – | jsonb, the student's results per lesson |
+| `results_overview` | `p_subject_id uuid?` | jsonb per lesson (staff) |
+| `lesson_results` | `p_lesson_id uuid` | jsonb per student (staff of the subject) |
 
 ## Admin server actions (D2, `apps/web/src/app/admin/(panel)/lessons/actions.ts`)
 | Action | What it does |
@@ -45,5 +51,10 @@ Storage paths: `lesson-media/<lesson id>/note.pdf`, `lesson-media/<lesson id>/vi
 ## Student exam server actions (D4, `apps/web/src/app/learn/[subjectId]/[lessonId]/exam/actions.ts`)
 `startExam`, `saveAnswer`, `submitExam` wrap the RPCs above and turn the hint into a text key.
 
+## Marking and teachers (D5)
+`markAnswer` (`apps/web/src/lib/marking/actions.ts`) wraps `mark_answer`. Admin teachers page
+(`apps/web/src/app/admin/(panel)/teachers/actions.ts`): `addTeacher` (creates the login with the
+service key, role teacher), `setTeacherSubjects`, `setTeacherActive`.
+
 ## Planned
-`mark-written-answer` (D5), `tutor-chat` (D6).
+AI marking of written answers and `tutor-chat` (D6).

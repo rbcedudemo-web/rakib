@@ -21,3 +21,6 @@
 | 25 Nov 2026 | Exam marks per question come from the lesson's exam settings; questions drawn at random and options shuffled per attempt; 30 s grace after the timer for slow networks | Claude |
 | 25 Nov 2026 | Written answers are saved as photos and wait for marking until D5 (AI marking + teacher review) | Claude |
 | 25 Nov 2026 | Rakib writes his own 30 MCQs per lesson; each attempt draws the exam's count at random from them. Bulk import: fixed-format Word/text is free (no AI); PDF import uses Claude Sonnet 5.5 because Bangla text in PDFs often cannot be read reliably without it | Rakib / Claude |
+| 25 Nov 2026 | Android app is a native Expo shell around the student portal (same accounts and features); APK built by GitHub Actions. Built early, parked until after D5/D6 at Rakib's request | Rakib / Claude |
+| 25 Nov 2026 | Order after exams (Rakib): teacher review + reports, then AI Tutor + AI marking, Android last | Rakib |
+| 25 Nov 2026 | Teacher marks: 0 to the question's marks in steps of 0.5; teacher comment shown instead of an AI comment; changes logged in `mark_changes` | Claude |

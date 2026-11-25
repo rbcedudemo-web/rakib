@@ -24,3 +24,5 @@ psql -v ON_ERROR_STOP=1 -q -h 127.0.0.1 -p "$PORT" -U postgres -d postgres -f su
   | grep -E 'NOTICE|ERROR|FAIL|PASSED' | sed -E 's/^psql:[^ ]+ //'
 psql -v ON_ERROR_STOP=1 -q -h 127.0.0.1 -p "$PORT" -U postgres -d postgres -f supabase/tests/exam_test.sql 2>&1 \
   | grep -E 'NOTICE|ERROR|FAIL|PASSED' | sed -E 's/^psql:[^ ]+ //'
+psql -v ON_ERROR_STOP=1 -q -h 127.0.0.1 -p "$PORT" -U postgres -d postgres -f supabase/tests/marking_test.sql 2>&1 \
+  | grep -E 'NOTICE|ERROR|FAIL|PASSED' | sed -E 's/^psql:[^ ]+ //'

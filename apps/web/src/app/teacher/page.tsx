@@ -2,7 +2,8 @@ import { toBanglaDigits } from "@rupshi/shared";
 import { requireRole } from "@/lib/auth/guards";
 import { getT } from "@/lib/i18n-server";
 import { createClient } from "@/lib/supabase/server";
-import { Card } from "@/components/ui";
+import Link from "next/link";
+import { Badge, Card } from "@/components/ui";
 
 export const metadata = { title: "Teacher" };
 
@@ -20,11 +21,27 @@ export default async function TeacherHome() {
     .eq("teacher_id", profile.id)
     .returns<Row[]>();
   const subjects = (data ?? []).flatMap((r) => (r.subject ? [r.subject] : []));
+  const { data: waitingData } = await supabase.rpc("marking_pending_count");
+  const waiting = Number(waitingData ?? 0);
+  const card = "rounded-card border border-neutral-200 bg-white p-5 shadow-sm transition-colors hover:border-primary-600";
 
   return (
     <main className="page py-8">
       <h1 className="text-2xl font-bold text-neutral-900 sm:text-3xl">{t("teacher.title")}</h1>
       <p className="mt-1 text-neutral-600">{profile.full_name}</p>
+      <section className="mt-6 grid gap-4 sm:grid-cols-2">
+        <Link href="/teacher/review" className={card}>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-lg font-semibold text-neutral-900">{t("teacher.review")}</span>
+            {waiting > 0 && <Badge tone="amber">{t("teacher.waiting", { n: locale === "bn" ? toBanglaDigits(waiting) : waiting })}</Badge>}
+          </div>
+          <p className="mt-1 text-sm text-neutral-600">{t("teacher.reviewNote")}</p>
+        </Link>
+        <Link href="/teacher/students" className={card}>
+          <span className="text-lg font-semibold text-neutral-900">{t("teacher.results")}</span>
+          <p className="mt-1 text-sm text-neutral-600">{t("teacher.resultsNote")}</p>
+        </Link>
+      </section>
       <h2 className="mb-3 mt-8 text-xl font-bold text-neutral-900">{t("teacher.subjects")}</h2>
       {subjects.length === 0 ? (
         <Card>{t("teacher.none")}</Card>

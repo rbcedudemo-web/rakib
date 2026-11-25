@@ -9,9 +9,12 @@ import { cn } from "@/lib/cn";
 const LIVE: { key: MessageKey; href: string }[] = [
   { key: "admin.nav.dashboard", href: "/admin" },
   { key: "admin.nav.lessons", href: "/admin/lessons" },
+  { key: "admin.nav.marking", href: "/admin/marking" },
+  { key: "admin.nav.results", href: "/admin/results" },
+  { key: "admin.nav.teachers", href: "/admin/teachers" },
   { key: "admin.nav.subjects", href: "/admin/subjects" },
 ];
-const SOON: MessageKey[] = ["admin.nav.questions", "admin.nav.students", "admin.nav.teachers", "admin.nav.results", "admin.nav.settings"];
+const SOON: MessageKey[] = ["admin.nav.students", "admin.nav.settings"];
 
 export function AdminNav() {
   const { t } = useT();
