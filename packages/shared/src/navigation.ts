@@ -52,6 +52,8 @@ export const PROFILE_MENU: Record<Role, NavItem[]> = {
   ],
   admin: [
     { key: "admin.title", href: "/admin" },
+    { key: "admin.nav.lessons", href: "/admin/lessons" },
+    { key: "admin.nav.subjects", href: "/admin/subjects" },
     { key: "profile.logout", href: "/logout" },
   ],
 };
