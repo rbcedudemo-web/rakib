@@ -32,6 +32,9 @@ export function LessonRowActions({ id, published, first, last }: { id: string; p
         <Link href={`/admin/lessons/${id}`} className={cn(small, "border-primary-600 text-primary-700 hover:bg-primary-50")}>
           {t("admin.action.edit")}
         </Link>
+        <Link href={`/admin/lessons/${id}/questions`} className={cn(small, "border-primary-600 text-primary-700 hover:bg-primary-50")}>
+          {t("admin.action.questions")}
+        </Link>
         <button type="button" disabled={pending} onClick={() => run(() => setLessonPublished(id, !published))}
           className={cn(small, published ? "border-neutral-300 text-neutral-700 hover:bg-neutral-50" : "border-primary-600 bg-primary-600 text-white hover:bg-primary-700")}>
           {t(published ? "admin.action.unpublish" : "admin.action.publish")}

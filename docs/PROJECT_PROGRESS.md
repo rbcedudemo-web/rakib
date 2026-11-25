@@ -1,5 +1,24 @@
 # Project Progress
 
+## 25 Nov 2026 — D3 + D4 Lesson page, AI question bank, exams with instant results
+Done
+- Student lesson page: ordered lesson list (✓ / 🔒), YouTube or MP4 player with watch tracking,
+  next lesson opens at 50% watched, note PDF below, exam and AI Tutor panel on the right.
+- AI question bank (Admin → lesson → Question bank): Claude (`claude-opus-5-5`) reads the transcript
+  and note PDF and writes 30–40 questions with explanations (MCQ) or model answer + marking guide
+  (written). Output is JSON checked against a schema and cleaned again before saving. Cost goes
+  to `ai_usage_log`. Server-side refusal fallback is on. Staff can edit, switch off, delete or add questions.
+- Exams: random questions per attempt, options shuffled, server timer with automatic submission,
+  3 attempts a day (reset at midnight Dhaka time), highest score counts, answers saved as they
+  are chosen, written answers as photos (shrunk on the phone before upload).
+- Instant result: score, %, right/wrong/skipped, and corrections for every question (right option,
+  the student's choice, explanation, model answer). Earlier attempts listed with links.
+
+Pending
+- Rakib runs `supabase/migrations/20261125000100_exams.sql` once in the SQL Editor.
+- Rakib adds `ANTHROPIC_API_KEY` in Vercel (guide part জ) before the AI button works.
+- Written answers wait for marking (AI marking and teacher review are D5).
+
 ## 24 Nov 2026 — D2 Admin: lessons and Video Upload
 Done
 - Admin area with its own menu (dashboard, Video Upload & Lessons, Subjects; later pages listed as coming).

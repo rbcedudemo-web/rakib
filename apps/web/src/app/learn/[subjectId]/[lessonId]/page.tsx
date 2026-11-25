@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getT } from "@/lib/i18n-server";
 import { Badge, ButtonLink, Card } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { scoreText, type ExamStatus } from "@/lib/exam";
 import { LessonPlayer } from "./LessonPlayer";
 
 interface ListRow {
@@ -140,6 +141,9 @@ export default async function LessonPage({ params }: { params: Promise<{ subject
   ]);
   const youTubeId = lesson.video_url ? parseYouTubeId(lesson.video_url) : null;
   const exam = lesson.exam;
+  const examStatus = isStudent
+    ? ((await supabase.rpc("exam_status", { p_lesson_id: lessonId })).data as ExamStatus | null)
+    : null;
 
   return (
     <main className="page py-6">
@@ -200,9 +204,24 @@ export default async function LessonPage({ params }: { params: Promise<{ subject
               </p>
             )}
             <p className="mt-1 text-xs text-neutral-500">{t("learn.examRules")}</p>
-            <button type="button" disabled className="mt-3 min-h-11 w-full rounded-[10px] bg-neutral-200 text-sm font-semibold text-neutral-500">
-              {t("learn.examSoon")}
-            </button>
+            {examStatus && (
+              <div className="mt-2 space-y-0.5 text-sm">
+                <p className="text-neutral-700">
+                  {t("learn.examLeft", {
+                    n: num(Math.max(0, examStatus.attempts_limit - examStatus.attempts_used)),
+                    limit: num(examStatus.attempts_limit),
+                  })}
+                </p>
+                {examStatus.best_score !== null && (
+                  <p className="font-semibold text-primary-700">
+                    {t("learn.examBest", { score: num(scoreText(examStatus.best_score)), max: num(scoreText(examStatus.best_max_score)) })}
+                  </p>
+                )}
+              </div>
+            )}
+            <ButtonLink href={`/learn/${subjectId}/${lessonId}/exam`} className="mt-3 w-full">
+              {examStatus?.open_attempt_id ? t("exam.resume") : t("learn.examStart")}
+            </ButtonLink>
           </Card>
           <Card>
             <div className="flex items-center justify-between gap-2">
