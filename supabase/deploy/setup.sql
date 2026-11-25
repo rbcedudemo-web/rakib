@@ -889,6 +889,11 @@ grant execute on function public.move_lesson(uuid, integer) to authenticated, se
 -- paper is submitted automatically when the time is up.
 -- =============================================================================
 
+-- Language of a question: decides the option letters (ক খ গ ঘ or A B C D)
+-- in the exam and the result, whatever language the site is shown in.
+alter table public.questions add column if not exists language text not null default 'bn'
+  check (language in ('bn', 'en'));
+
 -- A small grace period for network delay when the timer runs out.
 create or replace function public.exam_grace() returns interval
 language sql immutable set search_path = '' as $$ select interval '30 seconds' $$;
@@ -1043,6 +1048,7 @@ begin
            'id',       q.id,
            'n',        ord.n,
            'type',     q.type,
+           'lang',     q.language,
            'prompt',   q.prompt,
            'options',  case when q.type = 'mcq' then
                          (select jsonb_agg(q.options -> (o.idx)::int order by o.pos)

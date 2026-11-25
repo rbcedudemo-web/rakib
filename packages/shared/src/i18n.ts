@@ -387,6 +387,8 @@ const bn = {
   "admin.import.error.word": "Word file পড়া যায়নি। .docx file দিন, অথবা লেখা copy করে paste করুন।",
   "admin.import.error.pdfBig": "PDF খুব বড় (সর্বোচ্চ ১০ MB)",
   "admin.import.error.noFile": "PDF পাওয়া যায়নি। আবার বাছুন।",
+  "admin.qbank.field.language": "প্রশ্নের ভাষা",
+  "admin.import.rulesEn": "প্রতিটি প্রশ্নের পর ৪টি বিকল্প A) B) C) D), তারপর \"Answer: B\", তারপর ইচ্ছা হলে \"Explanation: …\"। প্রশ্নের নম্বর দিন (1. 2. …)।",
 } as const;
 
 export type MessageKey = keyof typeof bn;
@@ -776,6 +778,8 @@ const en: Record<MessageKey, string> = {
   "admin.import.error.word": "Could not read the Word file. Use a .docx file, or copy and paste the text.",
   "admin.import.error.pdfBig": "PDF too big (10 MB at most)",
   "admin.import.error.noFile": "The PDF was not found. Choose it again.",
+  "admin.qbank.field.language": "Question language",
+  "admin.import.rulesEn": "After each question give 4 options A) B) C) D), then \"Answer: B\", then optionally \"Explanation: …\". Number the questions (1. 2. …).",
 };
 
 export const messages: Record<Locale, Record<MessageKey, string>> = { bn, en };

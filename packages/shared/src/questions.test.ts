@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  aiCostUsd, bankTargets, cleanGeneratedQuestions, cleanQuestion, formatClock, questionLanguage, secondsLeft,
+  aiCostUsd, bankTargets, cleanGeneratedQuestions, cleanQuestion, formatClock, optionLetter, questionLanguage, secondsLeft,
 } from "./questions";
 
 const mcq = (prompt: string, extra: Record<string, unknown> = {}) => ({
@@ -74,5 +74,13 @@ describe("cost and timer", () => {
     expect(secondsLeft("2026-11-25T09:00:00Z", 0, now)).toBe(0);
     expect(formatClock(307)).toBe("05:07");
     expect(formatClock(-3)).toBe("00:00");
+  });
+});
+
+describe("optionLetter", () => {
+  it("follows the question's language, not the site's", () => {
+    expect([0, 1, 2, 3].map((i) => optionLetter(i, "bn")).join("")).toBe("কখগঘ");
+    expect([0, 1, 2, 3].map((i) => optionLetter(i, "en")).join("")).toBe("ABCD");
+    expect(optionLetter(0, null)).toBe("ক");
   });
 });

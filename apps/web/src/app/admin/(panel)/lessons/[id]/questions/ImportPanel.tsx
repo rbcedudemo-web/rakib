@@ -2,15 +2,14 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { parseQuestionText, toBanglaDigits, type ImportBlock, type MessageKey } from "@rupshi/shared";
+import { optionLetter, parseQuestionText, toBanglaDigits, type ImportBlock, type MessageKey, type QuestionLanguage } from "@rupshi/shared";
 import { useT } from "@/lib/i18n-client";
 import { cn } from "@/lib/cn";
 import { createBrowserSupabase } from "@/lib/supabase/browser";
 import { Button, Card } from "@/components/ui";
 import { importQuestions, readQuestionPdf } from "./actions";
-import { optionLetter } from "./QuestionEditor";
 
-const SAMPLE = `১. 'পদ্ম' শব্দের উচ্চারণ কোনটি?
+const SAMPLE_BN = `১. 'পদ্ম' শব্দের উচ্চারণ কোনটি?
 ক) পদ্‌মো
 খ) পদ্দোঁ
 গ) পোদ্‌মো
@@ -20,15 +19,26 @@ const SAMPLE = `১. 'পদ্ম' শব্দের উচ্চারণ ক
 
 ২. ...`;
 
+const SAMPLE_EN = `1. Which word is a noun?
+A) quickly
+B) happiness
+C) run
+D) beautiful
+Answer: B
+Explanation: "Happiness" names a feeling, so it is a noun.
+
+2. ...`;
+
 const input = "w-full rounded-[10px] border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-primary-600 focus:outline-none";
 const MAX_PDF = 10 * 1024 * 1024; // lesson-private bucket limit
 
 type Mode = "text" | "pdf";
 
-export function ImportPanel({ lessonId }: { lessonId: string }) {
+export function ImportPanel({ lessonId, lang }: { lessonId: string; lang: QuestionLanguage }) {
   const { t, locale } = useT();
   const router = useRouter();
   const num = (n: number | string) => (locale === "bn" ? toBanglaDigits(n) : String(n));
+  const SAMPLE = lang === "en" ? SAMPLE_EN : SAMPLE_BN;
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("text");
   const [text, setText] = useState("");
@@ -89,7 +99,7 @@ export function ImportPanel({ lessonId }: { lessonId: string }) {
         correctIndex: b.question!.correctIndex!,
         explanation: b.question!.explanation ?? "",
       }));
-      const r = await importQuestions(lessonId, items);
+      const r = await importQuestions(lessonId, items, lang);
       if (r.ok) {
         setMessage({ ok: true, text: t("admin.import.saved", { n: num(r.count ?? 0) }) });
         setBlocks(null);
@@ -126,7 +136,7 @@ export function ImportPanel({ lessonId }: { lessonId: string }) {
           <details className="rounded-[10px] bg-neutral-50 px-3 py-2 text-sm">
             <summary className="cursor-pointer font-semibold text-primary-700">{t("admin.import.sample")}</summary>
             <pre className="mt-2 whitespace-pre-wrap font-[inherit] text-neutral-800">{SAMPLE}</pre>
-            <p className="mt-2 text-xs text-neutral-600">{t("admin.import.rules")}</p>
+            <p className="mt-2 text-xs text-neutral-600">{t(lang === "en" ? "admin.import.rulesEn" : "admin.import.rules")}</p>
           </details>
           <label className="inline-flex min-h-11 cursor-pointer items-center rounded-[10px] border border-primary-600 px-4 text-sm font-semibold text-primary-700 hover:bg-primary-50">
             📄 {t("admin.import.word")}
@@ -173,7 +183,7 @@ export function ImportPanel({ lessonId }: { lessonId: string }) {
                   <ul className="mt-1 grid gap-0.5 sm:grid-cols-2">
                     {b.options.map((o, i) => (
                       <li key={i} className={cn(b.question?.correctIndex === i ? "font-semibold text-primary-700" : "text-neutral-700")}>
-                        {optionLetter(i, locale)}) {o} {b.question?.correctIndex === i && "✓"}
+                        {optionLetter(i, lang)}) {o} {b.question?.correctIndex === i && "✓"}
                       </li>
                     ))}
                   </ul>

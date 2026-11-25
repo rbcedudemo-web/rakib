@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { bankTargets, EXAM_DEFAULTS, isUuid, toBanglaDigits, type MessageKey } from "@rupshi/shared";
+import { bankTargets, EXAM_DEFAULTS, isUuid, questionLanguage, toBanglaDigits, type MessageKey } from "@rupshi/shared";
 import { getT } from "@/lib/i18n-server";
 import { createClient } from "@/lib/supabase/server";
 import { Badge, Card } from "@/components/ui";
 import { GeneratePanel } from "./GeneratePanel";
-import { ImportPanel } from "./ImportPanel";
-import { QuestionCard, QuestionEditor, type QuestionRow } from "./QuestionEditor";
+import { QuestionTools } from "./QuestionTools";
+import { QuestionCard, type QuestionRow } from "./QuestionEditor";
 
 export const metadata = { title: "Question bank" };
 // making a question bank with AI can take a few minutes
@@ -18,7 +18,7 @@ interface LessonHead {
   status: "draft" | "generating" | "ready" | "failed";
   transcript_path: string | null;
   note_pdf_path: string | null;
-  subject: { name_bn: string; name_en: string; class_id: number } | null;
+  subject: { name_bn: string; name_en: string; class_id: number; version: string; code: string } | null;
   exam: { mcq_count: number; written_count: number } | null;
 }
 
@@ -35,12 +35,12 @@ export default async function QuestionBankPage({
   const [{ data: lesson }, { data: qData }] = await Promise.all([
     supabase
       .from("lessons")
-      .select("id, title, status, transcript_path, note_pdf_path, subject:subjects(name_bn, name_en, class_id), exam:exam_settings(mcq_count, written_count)")
+      .select("id, title, status, transcript_path, note_pdf_path, subject:subjects(name_bn, name_en, class_id, version, code), exam:exam_settings(mcq_count, written_count)")
       .eq("id", id)
       .maybeSingle<LessonHead>(),
     supabase
       .from("questions")
-      .select("id, type, prompt, options, correct_index, explanation, model_answer, rubric, difficulty, source, is_active")
+      .select("id, type, prompt, options, correct_index, explanation, model_answer, rubric, difficulty, source, is_active, language")
       .eq("lesson_id", id)
       .order("is_active", { ascending: false })
       .order("type")
@@ -87,10 +87,7 @@ export default async function QuestionBankPage({
         generating={lesson.status === "generating"}
       />
 
-      <div className="flex flex-wrap items-start gap-2">
-        <QuestionEditor lessonId={id} />
-        <ImportPanel lessonId={id} />
-      </div>
+      <QuestionTools lessonId={id} defaultLang={lesson.subject ? questionLanguage(lesson.subject.version, lesson.subject.code) : "bn"} />
 
       <div className="flex justify-end">
         <Link href={showOff ? `?` : `?off=1`} className="text-sm font-semibold text-primary-700 hover:underline">

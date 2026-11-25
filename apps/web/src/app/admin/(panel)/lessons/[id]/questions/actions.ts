@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import {
   bankTargets, cleanQuestion, EXAM_DEFAULTS, importBlockFromParts, isUuid, LESSON_FILES, questionLanguage,
-  type CleanQuestion, type ImportBlock, type QuestionType, type Difficulty,
+  type CleanQuestion, type ImportBlock, type QuestionLanguage, type QuestionType, type Difficulty,
 } from "@rupshi/shared";
 import { createClient, getSession } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -48,8 +48,9 @@ async function logUsage(lessonId: string, userId: string, usage: Pick<GeneratedB
   }
 }
 
-function rowFor(q: CleanQuestion, lessonId: string, userId: string, marks: { mcq: number; written: number }, source: "ai" | "teacher") {
+function rowFor(q: CleanQuestion, lessonId: string, userId: string, marks: { mcq: number; written: number }, source: "ai" | "teacher", language: QuestionLanguage) {
   return {
+    language,
     lesson_id: lessonId,
     type: q.type,
     prompt: q.prompt,
@@ -104,12 +105,13 @@ export async function generateQuestions(lessonId: string): Promise<GenerateResul
         : null,
     ]);
 
+    const language = questionLanguage(lesson.subject.version, lesson.subject.code);
     const bank = await generateQuestionBank({
       classLevel: lesson.subject.class_id,
       subjectName: `${lesson.subject.name_bn} (${lesson.subject.name_en})`,
       lessonTitle: lesson.title,
       description: lesson.description,
-      language: questionLanguage(lesson.subject.version, lesson.subject.code),
+      language,
       transcript: transcript?.trim() || null,
       notePdf: note,
       targets: bankTargets(exam.mcq_count, exam.written_count),
@@ -128,7 +130,7 @@ export async function generateQuestions(lessonId: string): Promise<GenerateResul
       if (usedIds.size) await supabase.from("questions").update({ is_active: false }).in("id", [...usedIds]);
     }
     const marks = { mcq: exam.mcq_marks, written: exam.written_marks };
-    const { error } = await supabase.from("questions").insert(bank.questions.map((q) => rowFor(q, lessonId, session.user.id, marks, "ai")));
+    const { error } = await supabase.from("questions").insert(bank.questions.map((q) => rowFor(q, lessonId, session.user.id, marks, "ai", language)));
     if (error) {
       console.error("question insert failed", error);
       await supabase.from("lessons").update({ status: "failed" }).eq("id", lessonId);
@@ -163,6 +165,7 @@ export interface QuestionInput {
   modelAnswer: string;
   rubric: string;
   difficulty: Difficulty;
+  language: QuestionLanguage;
 }
 
 /** Adds or edits one question by hand. */
@@ -183,12 +186,12 @@ export async function saveQuestion(input: QuestionInput): Promise<{ ok: boolean;
   const { supabase, session } = ctx;
   const { data: es } = await supabase.from("exam_settings").select("mcq_marks, written_marks").eq("lesson_id", input.lessonId).maybeSingle();
   const marks = { mcq: Number(es?.mcq_marks ?? EXAM_DEFAULTS.mcqMarks), written: Number(es?.written_marks ?? EXAM_DEFAULTS.writtenMarks) };
-  const row = rowFor(q, input.lessonId, session.user.id, marks, "teacher");
+  const row = rowFor(q, input.lessonId, session.user.id, marks, "teacher", input.language === "en" ? "en" : "bn");
   const { error } = input.id
     ? await supabase.from("questions").update({
         type: row.type, prompt: row.prompt, options: row.options, correct_index: row.correct_index,
         explanation: row.explanation, model_answer: row.model_answer, rubric: row.rubric,
-        difficulty: row.difficulty, marks: row.marks,
+        difficulty: row.difficulty, marks: row.marks, language: row.language,
       }).eq("id", input.id).eq("lesson_id", input.lessonId)
     : await supabase.from("questions").insert(row);
   if (error) {
@@ -228,7 +231,7 @@ export interface ImportItem {
 const MAX_IMPORT = 200;
 
 /** Saves many checked MCQs at once (from pasted text, a Word file or a PDF). */
-export async function importQuestions(lessonId: string, items: ImportItem[]): Promise<{ ok: boolean; count?: number; reason?: "notAllowed" | "saveFailed" | "invalid" }> {
+export async function importQuestions(lessonId: string, items: ImportItem[], language: QuestionLanguage): Promise<{ ok: boolean; count?: number; reason?: "notAllowed" | "saveFailed" | "invalid" }> {
   const ctx = await staff();
   if (!ctx || !isUuid(lessonId) || !Array.isArray(items)) return { ok: false, reason: "notAllowed" };
   const clean = items.slice(0, MAX_IMPORT).map((i) => cleanQuestion({
@@ -239,7 +242,7 @@ export async function importQuestions(lessonId: string, items: ImportItem[]): Pr
   const { supabase, session } = ctx;
   const { data: es } = await supabase.from("exam_settings").select("mcq_marks, written_marks").eq("lesson_id", lessonId).maybeSingle();
   const marks = { mcq: Number(es?.mcq_marks ?? EXAM_DEFAULTS.mcqMarks), written: Number(es?.written_marks ?? EXAM_DEFAULTS.writtenMarks) };
-  const { error } = await supabase.from("questions").insert(clean.map((q) => rowFor(q, lessonId, session.user.id, marks, "teacher")));
+  const { error } = await supabase.from("questions").insert(clean.map((q) => rowFor(q, lessonId, session.user.id, marks, "teacher", language === "en" ? "en" : "bn")));
   if (error) {
     console.error("importQuestions failed", error);
     return { ok: false, reason: "saveFailed" };

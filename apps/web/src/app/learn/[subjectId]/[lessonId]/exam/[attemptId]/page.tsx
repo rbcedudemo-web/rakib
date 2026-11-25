@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { isUuid, toBanglaDigits } from "@rupshi/shared";
+import { isUuid, optionLetter, toBanglaDigits } from "@rupshi/shared";
 import { createClient, getSession } from "@/lib/supabase/server";
 import { getT } from "@/lib/i18n-server";
 import { Badge, ButtonLink, Card } from "@/components/ui";
@@ -9,8 +9,6 @@ import { scoreText, type ExamAttemptView, type ExamStatus } from "@/lib/exam";
 
 export const metadata = { title: "Exam result" };
 
-const LETTERS_BN = ["ক", "খ", "গ", "ঘ", "ঙ", "চ"];
-const LETTERS_EN = ["A", "B", "C", "D", "E", "F"];
 
 export default async function ExamResultPage({ params }: { params: Promise<{ subjectId: string; lessonId: string; attemptId: string }> }) {
   const { subjectId, lessonId, attemptId } = await params;
@@ -20,7 +18,6 @@ export default async function ExamResultPage({ params }: { params: Promise<{ sub
 
   const { t, locale } = await getT();
   const num = (n: number | string) => (locale === "bn" ? toBanglaDigits(n) : String(n));
-  const letters = locale === "bn" ? LETTERS_BN : LETTERS_EN;
   const lessonHref = `/learn/${subjectId}/${lessonId}`;
   const examHref = `${lessonHref}/exam`;
   const supabase = await createClient();
@@ -138,7 +135,7 @@ export default async function ExamResultPage({ params }: { params: Promise<{ sub
                           isRight ? "border-primary-600 bg-primary-50 font-semibold text-primary-800"
                             : isMine ? "border-accent-600 bg-accent-50 text-accent-700 line-through decoration-1"
                               : "border-neutral-200 text-neutral-600")}>
-                          <span className="font-bold">{letters[i]}.</span>
+                          <span className="font-bold">{optionLetter(i, q.lang)}.</span>
                           <span className="flex-1">{o}</span>
                           {isMine && <span className="text-xs font-semibold no-underline">{t("exam.result.yourAnswer")}</span>}
                           {isRight && <span aria-label={t("exam.result.rightAnswer")}>✓</span>}

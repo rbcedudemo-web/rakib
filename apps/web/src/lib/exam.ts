@@ -4,6 +4,7 @@ export interface ExamQuestionView {
   id: string;
   n: number;
   type: "mcq" | "written";
+  lang: "bn" | "en";
   prompt: string;
   options: string[] | null; // in the shuffled order shown to this student
   selected: number | null; // position in that order

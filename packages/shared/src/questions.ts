@@ -150,3 +150,14 @@ export function formatClock(totalSeconds: number): string {
   const s = Math.max(0, Math.floor(totalSeconds));
   return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 }
+
+export type QuestionLanguage = "bn" | "en";
+const OPTION_LETTERS: Record<QuestionLanguage, string[]> = {
+  bn: ["ক", "খ", "গ", "ঘ", "ঙ", "চ"],
+  en: ["A", "B", "C", "D", "E", "F"],
+};
+
+/** Option letter by the question's own language: ক খ গ ঘ or A B C D. */
+export function optionLetter(i: number, lang: string | null | undefined): string {
+  return OPTION_LETTERS[lang === "en" ? "en" : "bn"][i] ?? String(i + 1);
+}

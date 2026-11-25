@@ -71,6 +71,8 @@ insert into public.questions (lesson_id, type, prompt, options, correct_index, e
   ('10000000-0000-0000-0000-000000000001', 'written', 'লিখিত প্রশ্ন', null, null, null, 'আদর্শ উত্তর'),
   ('10000000-0000-0000-0000-000000000001', 'mcq', 'বাতিল প্রশ্ন', '["ঠিক","ভুল"]', 0, null, null);
 update public.questions set is_active = false where prompt = 'বাতিল প্রশ্ন';
+update public.questions set language = 'en' where prompt = 'প্রশ্ন ৩';
+select pg_temp.refused($$update public.questions set language = 'fr'$$, 'question language is Bangla or English only');
 
 -- --------------------------------------------------------- the student ----
 select pg_temp.act_as('00000000-0000-0000-0000-0000000000b1');
@@ -94,6 +96,8 @@ select pg_temp.check((select bool_and(q -> 'correct' = 'null'::jsonb and q -> 'e
                      'correct answers and explanations are hidden during the exam');
 select pg_temp.check((select not bool_or(q ->> 'prompt' = 'বাতিল প্রশ্ন') from t, jsonb_array_elements(v -> 'questions') q where k = 'a1'),
                      'switched-off questions are never asked');
+select pg_temp.check((select bool_and(q ->> 'lang' in ('bn', 'en')) from t, jsonb_array_elements(v -> 'questions') q where k = 'a1'),
+                     'each question tells the exam its language (for option letters)');
 select pg_temp.check((select (q ->> 'type') = 'written' from t, jsonb_array_elements(v -> 'questions') q
                        where k = 'a1' and (q ->> 'n')::int = 3), 'MCQs come first, written last');
 select pg_temp.check((select (deadline - started) between interval '4 minutes 59 seconds' and interval '5 minutes 1 second'

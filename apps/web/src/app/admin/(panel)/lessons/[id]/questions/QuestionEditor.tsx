@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { MCQ_OPTION_COUNT, type Difficulty, type MessageKey, type QuestionType } from "@rupshi/shared";
+import { MCQ_OPTION_COUNT, optionLetter, type Difficulty, type MessageKey, type QuestionLanguage, type QuestionType } from "@rupshi/shared";
 import { useT } from "@/lib/i18n-client";
 import { cn } from "@/lib/cn";
 import { Badge, Button, Card } from "@/components/ui";
@@ -19,19 +19,14 @@ export interface QuestionRow {
   difficulty: Difficulty;
   source: "ai" | "teacher";
   is_active: boolean;
+  language: QuestionLanguage;
 }
 
-const LETTERS_BN = ["ক", "খ", "গ", "ঘ", "ঙ", "চ"];
-const LETTERS_EN = ["A", "B", "C", "D", "E", "F"];
 const small = "inline-flex min-h-9 items-center justify-center rounded-lg border px-2.5 text-xs font-semibold transition-colors disabled:opacity-40";
 const input = "w-full rounded-[10px] border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-primary-600 focus:outline-none";
 
-export function optionLetter(i: number, locale: string) {
-  return (locale === "bn" ? LETTERS_BN : LETTERS_EN)[i] ?? String(i + 1);
-}
-
 /** "+ add a question" button that opens an empty form. */
-export function QuestionEditor({ lessonId }: { lessonId: string }) {
+export function QuestionEditor({ lessonId, lang }: { lessonId: string; lang: QuestionLanguage }) {
   const { t } = useT();
   const [open, setOpen] = useState(false);
   if (!open)
@@ -40,11 +35,11 @@ export function QuestionEditor({ lessonId }: { lessonId: string }) {
         {t("admin.qbank.add")}
       </Button>
     );
-  return <QuestionForm lessonId={lessonId} onDone={() => setOpen(false)} />;
+  return <QuestionForm lessonId={lessonId} lang={lang} onDone={() => setOpen(false)} />;
 }
 
-function QuestionForm({ lessonId, q, onDone }: { lessonId: string; q?: QuestionRow; onDone: () => void }) {
-  const { t, locale } = useT();
+function QuestionForm({ lessonId, q, lang, onDone }: { lessonId: string; q?: QuestionRow; lang: QuestionLanguage; onDone: () => void }) {
+  const { t } = useT();
   const [pending, start] = useTransition();
   const [error, setError] = useState<MessageKey | null>(null);
   const [form, setForm] = useState<QuestionInput>({
@@ -58,6 +53,7 @@ function QuestionForm({ lessonId, q, onDone }: { lessonId: string; q?: QuestionR
     modelAnswer: q?.model_answer ?? "",
     rubric: q?.rubric ?? "",
     difficulty: q?.difficulty ?? "medium",
+    language: q?.language ?? lang,
   });
   const set = <K extends keyof QuestionInput>(k: K, v: QuestionInput[K]) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -87,6 +83,13 @@ function QuestionForm({ lessonId, q, onDone }: { lessonId: string; q?: QuestionR
             ))}
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-neutral-700">
+          {t("admin.qbank.field.language")}
+          <select className={cn(input, "h-11")} value={form.language} onChange={(e) => set("language", e.target.value as QuestionLanguage)}>
+            <option value="bn">বাংলা (ক খ গ ঘ)</option>
+            <option value="en">English (A B C D)</option>
+          </select>
+        </label>
       </div>
       <label className="grid gap-1 text-sm font-semibold text-neutral-700">
         {t("admin.qbank.field.prompt")}
@@ -98,9 +101,9 @@ function QuestionForm({ lessonId, q, onDone }: { lessonId: string; q?: QuestionR
           {form.options.map((o, i) => (
             <div key={i} className="flex items-center gap-2">
               <input type="radio" name="correct" className="h-5 w-5 accent-primary-600" checked={form.correctIndex === i}
-                onChange={() => set("correctIndex", i)} aria-label={`${t("admin.qbank.field.correct")}: ${optionLetter(i, locale)}`} />
-              <span className="w-5 text-sm font-bold text-neutral-600">{optionLetter(i, locale)}</span>
-              <input className={input} value={o} placeholder={t("admin.qbank.field.option", { n: optionLetter(i, locale) })}
+                onChange={() => set("correctIndex", i)} aria-label={`${t("admin.qbank.field.correct")}: ${optionLetter(i, form.language)}`} />
+              <span className="w-5 text-sm font-bold text-neutral-600">{optionLetter(i, form.language)}</span>
+              <input className={input} value={o} placeholder={t("admin.qbank.field.option", { n: optionLetter(i, form.language) })}
                 onChange={(e) => set("options", form.options.map((x, j) => (j === i ? e.target.value : x)))} />
             </div>
           ))}
@@ -131,11 +134,11 @@ function QuestionForm({ lessonId, q, onDone }: { lessonId: string; q?: QuestionR
 }
 
 export function QuestionCard({ lessonId, q, n }: { lessonId: string; q: QuestionRow; n: string }) {
-  const { t, locale } = useT();
+  const { t } = useT();
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [pending, start] = useTransition();
-  if (editing) return <QuestionForm lessonId={lessonId} q={q} onDone={() => setEditing(false)} />;
+  if (editing) return <QuestionForm lessonId={lessonId} q={q} lang={q.language} onDone={() => setEditing(false)} />;
   const tone = { easy: "green", medium: "amber", hard: "red" } as const;
 
   return (
@@ -145,6 +148,7 @@ export function QuestionCard({ lessonId, q, n }: { lessonId: string; q: Question
         <Badge tone="gray">{t(`admin.qbank.type.${q.type}`)}</Badge>
         <Badge tone={tone[q.difficulty]}>{t(`admin.qbank.diff.${q.difficulty}`)}</Badge>
         <Badge tone={q.source === "ai" ? "green" : "amber"}>{t(`admin.qbank.source.${q.source}`)}</Badge>
+        <Badge tone="gray">{q.language === "en" ? "English" : "বাংলা"}</Badge>
         {!q.is_active && <Badge tone="red">{t("admin.qbank.off")}</Badge>}
       </div>
       <p className="whitespace-pre-line font-semibold text-neutral-900">{q.prompt}</p>
@@ -152,7 +156,7 @@ export function QuestionCard({ lessonId, q, n }: { lessonId: string; q: Question
         <ul className="grid gap-1 sm:grid-cols-2">
           {q.options.map((o, i) => (
             <li key={i} className={cn("rounded-lg px-2.5 py-1.5 text-sm", i === q.correct_index ? "bg-primary-100 font-semibold text-primary-800" : "bg-neutral-50 text-neutral-700")}>
-              {optionLetter(i, locale)}. {o} {i === q.correct_index && "✓"}
+              {optionLetter(i, q.language)}. {o} {i === q.correct_index && "✓"}
             </li>
           ))}
         </ul>

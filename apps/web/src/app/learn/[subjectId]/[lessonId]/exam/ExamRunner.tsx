@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatClock, secondsLeft, toBanglaDigits, type MessageKey } from "@rupshi/shared";
+import { formatClock, optionLetter, secondsLeft, toBanglaDigits, type MessageKey } from "@rupshi/shared";
 import { useT } from "@/lib/i18n-client";
 import { cn } from "@/lib/cn";
 import { createBrowserSupabase } from "@/lib/supabase/browser";
@@ -10,8 +10,6 @@ import { Button, Card } from "@/components/ui";
 import type { ExamAttemptView, ExamQuestionView } from "@/lib/exam";
 import { saveAnswer, submitExam } from "./actions";
 
-const LETTERS_BN = ["ক", "খ", "গ", "ঘ", "ঙ", "চ"];
-const LETTERS_EN = ["A", "B", "C", "D", "E", "F"];
 const MAX_PHOTOS = 4;
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 
@@ -38,7 +36,6 @@ export function ExamRunner({ initial, studentId, resultBase }: { initial: ExamAt
   const { t, locale } = useT();
   const router = useRouter();
   const num = useCallback((n: number | string) => (locale === "bn" ? toBanglaDigits(n) : String(n)), [locale]);
-  const letters = locale === "bn" ? LETTERS_BN : LETTERS_EN;
   const attemptId = initial.id;
 
   // server clock minus this device's clock: a wrong phone clock cannot add time
@@ -226,7 +223,7 @@ export function ExamRunner({ initial, studentId, resultBase }: { initial: ExamAt
                         >
                           <span className={cn("grid h-7 w-7 shrink-0 place-items-center rounded-full border text-xs font-bold",
                             on ? "border-primary-600 bg-primary-600 text-white" : "border-neutral-300 text-neutral-600")}>
-                            {letters[i]}
+                            {optionLetter(i, q.lang)}
                           </span>
                           {o}
                         </button>
