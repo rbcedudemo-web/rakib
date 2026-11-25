@@ -16,3 +16,8 @@
 | 23 Nov 2026 | Class 9–10 subject list beyond Bangla/English/Math follows NCTB SSC structure [Inferred]; English Medium and Madrasa get only the three demo subjects until the admin adds theirs | Claude |
 | 23 Nov 2026 | Database setup is one SQL file pasted into the Supabase SQL Editor, so no database password leaves Rakib | Claude |
 | 23 Nov 2026 | Hosting on Vercel Hobby (project rakib, https://rakib-azure.vercel.app); table/function grants to API roles are explicit in a migration instead of relying on project defaults | Claude |
+| 25 Nov 2026 | AI question bank runs as a Next.js server action on Vercel (up to 300 s) instead of a Supabase Edge Function, so the API key lives in one place (Vercel) | Claude |
+| 25 Nov 2026 | Questions made with `claude-opus-5-5` using JSON structured output, then checked again in code; refusal fallback on; about $0.30–0.60 per lesson | Claude |
+| 25 Nov 2026 | Exam marks per question come from the lesson's exam settings; questions drawn at random and options shuffled per attempt; 30 s grace after the timer for slow networks | Claude |
+| 25 Nov 2026 | Written answers are saved as photos and wait for marking until D5 (AI marking + teacher review) | Claude |
+| 25 Nov 2026 | Rakib writes his own 30 MCQs per lesson; each attempt draws the exam's count at random from them. Bulk import: fixed-format Word/text is free (no AI); PDF import uses Claude Sonnet 5.5 because Bangla text in PDFs often cannot be read reliably without it | Rakib / Claude |
