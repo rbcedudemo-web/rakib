@@ -1,5 +1,22 @@
 # Project Progress
 
+## 25 Nov 2026 — D5 (free part) Teacher review of written answers, and reports
+Done
+- Review scripts (Admin → Review scripts, Teacher → Review scripts): written answers with photos,
+  the model answer and marking guide beside them, quick mark buttons (halves allowed), a comment
+  for the student. Marks can be changed later; every change is kept in `mark_changes` with the
+  reason. The attempt score updates at once and the student sees the marks and comment in the result.
+- Teachers (Admin → Teachers): add a teacher by name and mobile number, give subjects, switch off.
+  Teachers sign in on the normal login page and see only their own subjects.
+- Reports: students see their own results per lesson (best score, attempts, waiting marks) under
+  Reports; admins and teachers see per-lesson results (students, attempts, average best score,
+  scripts waiting) and a per-student list with a link to each script.
+- Android app (D7) built early on request and parked: PR #7, to be finished last.
+
+Pending
+- AI marking of written answers and AI Tutor (needs Rakib's Anthropic key).
+
+
 ## 25 Nov 2026 — D3 + D4 Lesson page, AI question bank, exams with instant results
 Done
 - Student lesson page: ordered lesson list (✓ / 🔒), YouTube or MP4 player with watch tracking,

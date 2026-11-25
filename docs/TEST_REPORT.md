@@ -1,5 +1,15 @@
 # Test Report
 
+## 25 Nov 2026 — D5 teacher review + reports
+| Check | Result |
+| --- | --- |
+| Marking + report tests (`supabase/tests/marking_test.sql`) | 22 / 22 passed: students and other-subject teachers cannot see or mark, marks only 0–max in halves, score updates, marked list shows who marked, every change logged, staff results and per-lesson list, student sees teacher marks and comment, student report updates, other students see nothing |
+| Earlier database tests | 50 RLS + 38 exam, all passed |
+| Unit tests, typecheck, production build | 67 shared passed; build passed |
+| Mark form and Add-teacher form on a phone (390 px) | Checked with Playwright on mock data, no sideways scroll |
+| Against the live database | Not run here (supabase.co unreachable); Rakib checks after running `d5-marking-update.sql` |
+
+
 ## 25 Nov 2026 — D3 + D4
 | Check | Result |
 | --- | --- |

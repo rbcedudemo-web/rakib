@@ -31,8 +31,8 @@ export const PROFILE_MENU: Record<Role, NavItem[]> = {
     { key: "profile.student.profile", href: "/me/profile" },
     { key: "profile.student.dashboard", href: "/me" },
     { key: "profile.student.courses", href: "/me/courses" },
-    { key: "profile.student.progress", href: "/me/progress" },
-    { key: "profile.student.exams", href: "/me/exams" },
+    { key: "profile.student.progress", href: "/reports" },
+    { key: "profile.student.exams", href: "/reports" },
     { key: "profile.student.liveSchedule", href: "/live" },
     { key: "profile.student.subscription", href: "/me/subscription" },
     { key: "profile.student.guardian", href: "/me/guardian" },
@@ -53,7 +53,9 @@ export const PROFILE_MENU: Record<Role, NavItem[]> = {
   admin: [
     { key: "admin.title", href: "/admin" },
     { key: "admin.nav.lessons", href: "/admin/lessons" },
-    { key: "admin.nav.subjects", href: "/admin/subjects" },
+    { key: "admin.nav.marking", href: "/admin/marking" },
+    { key: "admin.nav.results", href: "/admin/results" },
+    { key: "admin.nav.teachers", href: "/admin/teachers" },
     { key: "profile.logout", href: "/logout" },
   ],
 };
