@@ -5,6 +5,7 @@ import { getT } from "@/lib/i18n-server";
 import { createClient } from "@/lib/supabase/server";
 import { Badge, Card } from "@/components/ui";
 import { GeneratePanel } from "./GeneratePanel";
+import { ImportPanel } from "./ImportPanel";
 import { QuestionCard, QuestionEditor, type QuestionRow } from "./QuestionEditor";
 
 export const metadata = { title: "Question bank" };
@@ -86,7 +87,10 @@ export default async function QuestionBankPage({
         generating={lesson.status === "generating"}
       />
 
-      <QuestionEditor lessonId={id} />
+      <div className="flex flex-wrap items-start gap-2">
+        <QuestionEditor lessonId={id} />
+        <ImportPanel lessonId={id} />
+      </div>
 
       <div className="flex justify-end">
         <Link href={showOff ? `?` : `?off=1`} className="text-sm font-semibold text-primary-700 hover:underline">

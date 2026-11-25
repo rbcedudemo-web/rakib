@@ -8,6 +8,9 @@ Done
   and note PDF and writes 30–40 questions with explanations (MCQ) or model answer + marking guide
   (written). Output is JSON checked against a schema and cleaned again before saving. Cost goes
   to `ai_usage_log`. Server-side refusal fallback is on. Staff can edit, switch off, delete or add questions.
+- Bulk import (Question bank → "Add many questions at once"): free fixed-format text or Word (.docx,
+  read in the browser) with a preview that marks problems in red; or a PDF read by Claude Sonnet 5.5
+  (copies only, about $0.10–0.20 per PDF). Template Word file for teachers.
 - Exams: random questions per attempt, options shuffled, server timer with automatic submission,
   3 attempts a day (reset at midnight Dhaka time), highest score counts, answers saved as they
   are chosen, written answers as photos (shrunk on the phone before upload).

@@ -125,9 +125,10 @@ export function questionLanguage(version: string, subjectCode: string): "bn" | "
   return version === "english_version" || version === "english_medium" ? "en" : "bn";
 }
 
-/** Opus 5.5 list prices (USD per million tokens), for the AI cost log. */
+/** Claude list prices (USD per million tokens), for the AI cost log. */
 export const AI_PRICES: Record<string, { input: number; output: number }> = {
   "claude-opus-5-5": { input: 4, output: 20 },
+  "claude-sonnet-5-5": { input: 2, output: 10 },
 };
 
 export function aiCostUsd(model: string, inputTokens: number, outputTokens: number): number {

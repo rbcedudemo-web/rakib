@@ -70,7 +70,7 @@ function QuestionForm({ lessonId, q, onDone }: { lessonId: string; q?: QuestionR
     });
 
   return (
-    <Card className="space-y-3 border-primary-600">
+    <Card className="w-full space-y-3 border-primary-600">
       <div className="flex flex-wrap gap-3">
         <label className="grid gap-1 text-sm font-semibold text-neutral-700">
           {t("admin.qbank.field.type")}

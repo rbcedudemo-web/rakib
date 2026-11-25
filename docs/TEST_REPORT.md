@@ -8,6 +8,7 @@
 | Unit tests: question cleaning (bad/duplicate options, wrong index, missing model answer), bank size targets, question language, AI cost, exam clock with server offset | 61 shared + 14 web passed |
 | Typecheck, production build (22 routes) | Passed |
 | Exam screen on a phone (390 px) | Checked with Playwright on mock data |
+| Bulk import: parser (Bangla/English formats, inline options, lost Word numbering, missing answer, wrong letter, same options) | 5 unit tests passed; real .docx read in the browser with Playwright (3 good, 1 marked red as expected) |
 | Real AI call | Not run: needs Rakib's API key in Vercel; the build environment cannot reach the API with his key |
 
 ## 24 Nov 2026 — D2

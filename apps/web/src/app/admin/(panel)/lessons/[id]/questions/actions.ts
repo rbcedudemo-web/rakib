@@ -2,12 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import {
-  bankTargets, cleanQuestion, EXAM_DEFAULTS, isUuid, LESSON_FILES, questionLanguage,
-  type CleanQuestion, type QuestionType, type Difficulty,
+  bankTargets, cleanQuestion, EXAM_DEFAULTS, importBlockFromParts, isUuid, LESSON_FILES, questionLanguage,
+  type CleanQuestion, type ImportBlock, type QuestionType, type Difficulty,
 } from "@rupshi/shared";
 import { createClient, getSession } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { generateQuestionBank, QuestionBankError, type GeneratedBank } from "@/lib/ai/questionBank";
+import { extractQuestionsFromPdf, generateQuestionBank, QuestionBankError, type GeneratedBank } from "@/lib/ai/questionBank";
 
 type GenerateError = QuestionBankError["code"] | "notAllowed" | "busy" | "saveFailed";
 export type GenerateResult = { ok: true; count: number; costUsd: number } | { ok: false; reason: GenerateError };
@@ -217,3 +217,66 @@ export async function deleteQuestion(lessonId: string, id: string): Promise<{ ok
   return { ok: true };
 }
 
+
+export interface ImportItem {
+  prompt: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+const MAX_IMPORT = 200;
+
+/** Saves many checked MCQs at once (from pasted text, a Word file or a PDF). */
+export async function importQuestions(lessonId: string, items: ImportItem[]): Promise<{ ok: boolean; count?: number; reason?: "notAllowed" | "saveFailed" | "invalid" }> {
+  const ctx = await staff();
+  if (!ctx || !isUuid(lessonId) || !Array.isArray(items)) return { ok: false, reason: "notAllowed" };
+  const clean = items.slice(0, MAX_IMPORT).map((i) => cleanQuestion({
+    type: "mcq", prompt: i.prompt, options: i.options, correct_index: i.correctIndex,
+    explanation: i.explanation, model_answer: "", rubric: "", difficulty: "medium",
+  })).filter((q): q is CleanQuestion => q !== null);
+  if (clean.length === 0) return { ok: false, reason: "invalid" };
+  const { supabase, session } = ctx;
+  const { data: es } = await supabase.from("exam_settings").select("mcq_marks, written_marks").eq("lesson_id", lessonId).maybeSingle();
+  const marks = { mcq: Number(es?.mcq_marks ?? EXAM_DEFAULTS.mcqMarks), written: Number(es?.written_marks ?? EXAM_DEFAULTS.writtenMarks) };
+  const { error } = await supabase.from("questions").insert(clean.map((q) => rowFor(q, lessonId, session.user.id, marks, "teacher")));
+  if (error) {
+    console.error("importQuestions failed", error);
+    return { ok: false, reason: "saveFailed" };
+  }
+  revalidatePath(`/admin/lessons/${lessonId}/questions`);
+  return { ok: true, count: clean.length };
+}
+
+export type ReadPdfResult =
+  | { ok: true; blocks: ImportBlock[]; costUsd: number }
+  | { ok: false; reason: QuestionBankError["code"] | "notAllowed" };
+
+/** The browser uploads the PDF to lesson-private/<lesson>/import.pdf first; the AI copies its questions. Nothing is saved yet. */
+export async function readQuestionPdf(lessonId: string): Promise<ReadPdfResult> {
+  const ctx = await staff();
+  if (!ctx || !isUuid(lessonId)) return { ok: false, reason: "notAllowed" };
+  const { supabase, session } = ctx;
+  const path = importPdfPath(lessonId);
+  const bucket = supabase.storage.from(LESSON_FILES.transcript.bucket);
+  try {
+    const { data } = await bucket.download(path);
+    if (!data) return { ok: false, reason: "noMaterial" };
+    const bank = await extractQuestionsFromPdf(Buffer.from(await data.arrayBuffer()));
+    await logUsage(lessonId, session.user.id, bank);
+    const blocks = bank.questions.map((q, i) =>
+      importBlockFromParts(i + 1, q.prompt, q.options, Number.isInteger(q.correct_index) ? q.correct_index : null, q.explanation ?? ""));
+    return { ok: true, blocks, costUsd: bank.costUsd };
+  } catch (error) {
+    const usage = (error as { usage?: GeneratedBank }).usage;
+    if (usage) await logUsage(lessonId, session.user.id, usage);
+    if (!(error instanceof QuestionBankError)) console.error("readQuestionPdf failed", error);
+    return { ok: false, reason: error instanceof QuestionBankError ? error.code : "aiFailed" };
+  } finally {
+    await bucket.remove([path]);
+  }
+}
+
+function importPdfPath(lessonId: string) {
+  return `${lessonId}/import.pdf`;
+}

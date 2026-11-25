@@ -138,3 +138,106 @@ export async function generateQuestionBank(m: LessonMaterial): Promise<Generated
     throw Object.assign(new QuestionBankError("tooFew"), { usage: base });
   return { questions, dropped, ...base };
 }
+
+// ---------------------------------------------------------------------------
+// Reading teacher-written questions from a PDF (no new questions are made).
+
+export const EXTRACT_MODEL = "claude-sonnet-5-5";
+
+const EXTRACT_SCHEMA = {
+  type: "object",
+  properties: {
+    questions: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          prompt: { type: "string" },
+          options: { type: "array", items: { type: "string" } },
+          correct_index: { type: "integer" },
+          explanation: { type: "string" },
+        },
+        required: ["prompt", "options", "correct_index", "explanation"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["questions"],
+  additionalProperties: false,
+} as const;
+
+export interface ExtractedQuestion {
+  prompt: string;
+  options: string[];
+  correct_index: number;
+  explanation: string;
+}
+
+export interface ExtractedBank {
+  questions: ExtractedQuestion[];
+  model: string;
+  inputTokens: number;
+  outputTokens: number;
+  costUsd: number;
+}
+
+/** Copies the MCQs in a teacher's PDF into JSON, exactly as written. */
+export async function extractQuestionsFromPdf(pdf: Buffer): Promise<ExtractedBank> {
+  if (!process.env.ANTHROPIC_API_KEY) throw new QuestionBankError("noKey");
+  if (pdf.byteLength > MAX_PDF_BYTES) throw new QuestionBankError("noteTooBig");
+  const client = new Anthropic({ maxRetries: 2, timeout: 280_000 });
+
+  let message: Anthropic.Beta.BetaMessage;
+  try {
+    const stream = client.beta.messages.stream({
+      model: EXTRACT_MODEL,
+      max_tokens: 32_000,
+      betas: ["server-side-fallback-2026-07-01"],
+      fallbacks: "default",
+      system: [
+        "You copy multiple-choice questions from a teacher's PDF into JSON. Do not write, improve, translate or add questions: copy them exactly as printed, in the same language and order.",
+        "- prompt: the question text without its number.",
+        "- options: the option texts in order, without their letters (ক খ গ ঘ or A B C D).",
+        "- correct_index: 0-based position of the answer the PDF marks as correct (an 'উত্তর' / 'Answer' line, a tick, bold or underline). Use -1 if the PDF does not say.",
+        "- explanation: the PDF's explanation for that question, or \"\" if there is none.",
+        "Skip anything that is not a multiple-choice question.",
+      ].join("\n"),
+      messages: [{
+        role: "user",
+        content: [
+          { type: "document", source: { type: "base64", media_type: "application/pdf", data: pdf.toString("base64") } },
+          { type: "text", text: "Copy every multiple-choice question in this PDF." },
+        ],
+      }],
+      output_config: {
+        effort: "low",
+        format: { type: "json_schema", schema: EXTRACT_SCHEMA as unknown as Record<string, unknown> },
+      },
+    });
+    message = await stream.finalMessage();
+  } catch (err) {
+    if (err instanceof Anthropic.AuthenticationError || err instanceof Anthropic.PermissionDeniedError)
+      throw new QuestionBankError("noKey");
+    if (err instanceof Anthropic.RateLimitError || err instanceof Anthropic.InternalServerError || err instanceof Anthropic.APIConnectionError)
+      throw new QuestionBankError("aiBusy");
+    console.error("pdf import: AI request failed", err);
+    throw new QuestionBankError("aiFailed");
+  }
+
+  const inputTokens = (message.usage.input_tokens ?? 0) + (message.usage.cache_creation_input_tokens ?? 0) + (message.usage.cache_read_input_tokens ?? 0);
+  const outputTokens = message.usage.output_tokens ?? 0;
+  const base = { model: message.model, inputTokens, outputTokens, costUsd: aiCostUsd(message.model, inputTokens, outputTokens) };
+  if (message.stop_reason === "refusal") throw Object.assign(new QuestionBankError("refused"), { usage: base });
+
+  let parsed: { questions?: unknown } = {};
+  try {
+    parsed = JSON.parse(message.content.filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === "text").map((b) => b.text).join(""));
+  } catch {
+    console.error("pdf import: answer was not JSON", message.stop_reason);
+  }
+  const questions = (Array.isArray(parsed.questions) ? parsed.questions : []).filter(
+    (q): q is ExtractedQuestion => !!q && typeof q === "object" && typeof (q as ExtractedQuestion).prompt === "string" && Array.isArray((q as ExtractedQuestion).options),
+  );
+  if (questions.length === 0) throw Object.assign(new QuestionBankError("tooFew"), { usage: base });
+  return { questions, ...base };
+}
